@@ -23,23 +23,6 @@ RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget li
   && rm -rf boost_${BOOST_VERSION_} \
   && apk del .build-deps
 
-ARG POCO_VERSION=1.9.0
-
-RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget linux-headers \
-  && cd /home && wget http://pocoproject.org/releases/poco-${POCO_VERSION}/poco-${POCO_VERSION}-all.tar.gz \
-  && tar xfz poco-${POCO_VERSION}-all.tar.gz \
-  && rm poco-${POCO_VERSION}-all.tar.gz \
-  && cd poco-${POCO_VERSION}-all \
-  && mkdir cmake_build \
-  && cd cmake_build \
-  && cmake -DWT_CPP_11_MODE='-std=c++11' -DENABLE_NETSSL=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_ODBC=OFF -DENABLE_DATA_MYSQL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${LIBPATH} .. \
-  && make -j8 \
-  && make install \
-  && ldconfig ${LIBPATH}/lib \
-  && cd /home \
-  && rm -rf poco-${POCO_VERSION}-all \
-  && apk del .build-deps
-
 ARG GRPC_VERSION=1.16.1
 
 RUN apk add --update --no-cache --virtual .build-deps autoconf automake cmake git g++ libtool make linux-headers \
@@ -58,6 +41,23 @@ RUN apk add --update --no-cache --virtual .build-deps autoconf automake cmake gi
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf grpc_${GRPC_VERSION} \
+  && apk del .build-deps
+
+ARG POCO_VERSION=1.9.0
+
+RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget linux-headers \
+  && cd /home && wget http://pocoproject.org/releases/poco-${POCO_VERSION}/poco-${POCO_VERSION}-all.tar.gz \
+  && tar xfz poco-${POCO_VERSION}-all.tar.gz \
+  && rm poco-${POCO_VERSION}-all.tar.gz \
+  && cd poco-${POCO_VERSION}-all \
+  && mkdir cmake_build \
+  && cd cmake_build \
+  && cmake -DWT_CPP_11_MODE='-std=c++11' -DENABLE_NETSSL=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_ODBC=OFF -DENABLE_DATA_MYSQL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${LIBPATH} .. \
+  && make -j8 \
+  && make install \
+  && ldconfig ${LIBPATH}/lib \
+  && cd /home \
+  && rm -rf poco-${POCO_VERSION}-all \
   && apk del .build-deps
 
 ARG WT_VERSION=4.0.4
