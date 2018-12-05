@@ -2,7 +2,7 @@ FROM alpine:3.8
 
 MAINTAINER "Adrian Gersbach"
 
-ARG LIBPATH=${LIBPATH}
+ARG LIBPATH=/usr/local
 
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
 # and then install
