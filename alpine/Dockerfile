@@ -4,8 +4,6 @@ MAINTAINER "Adrian Gersbach"
 
 ARG LIBPATH=${LIBPATH}
 
-RUN apk add --update --no-cache rsync openssh
-
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
 # and then install
 
