@@ -2,6 +2,8 @@ FROM alpine:3.8
 
 MAINTAINER "Adrian Gersbach"
 
+ARG LIBPATH=${LIBPATH}
+
 RUN apk add --update --no-cache rsync openssh
 
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
@@ -15,14 +17,14 @@ RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget li
   && tar xfz boost_${BOOST_VERSION_}.tar.gz \
   && rm boost_${BOOST_VERSION_}.tar.gz \
   && cd boost_${BOOST_VERSION_} \
-  && ./bootstrap.sh --prefix=/usr/local --with-libraries=chrono,date_time,filesystem,program_options,random,regex,serialization,signals,system,thread \
+  && ./bootstrap.sh --prefix=${LIBPATH} --with-libraries=atomic,chrono,date_time,filesystem,program_options,random,regex,serialization,signals,system,thread \
   && ./b2 -j8 install \
-  && ldconfig /usr/local/lib \
+  && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_} \
   && apk del .build-deps
 
-ENV PATH="${PATH}:/usr/local/lib"
+ENV PATH="${PATH}:${LIBPATH}/lib"
 
 ARG POCO_VERSION=1.9.0
 
@@ -33,10 +35,10 @@ RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget li
   && cd poco-${POCO_VERSION}-all \
   && mkdir cmake_build \
   && cd cmake_build \
-  && cmake -DWT_CPP_11_MODE='-std=c++11' -DENABLE_NETSSL=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_ODBC=OFF -DENABLE_DATA_MYSQL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. \
+  && cmake -DWT_CPP_11_MODE='-std=c++11' -DENABLE_NETSSL=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_ODBC=OFF -DENABLE_DATA_MYSQL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${LIBPATH} .. \
   && make -j8 \
   && make install \
-  && ldconfig /usr/local/lib \
+  && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf poco-${POCO_VERSION}-all \
   && apk del .build-deps
@@ -50,27 +52,30 @@ RUN apk add --update --no-cache --virtual .build-deps autoconf automake cmake gi
   && git submodule update --init \
   && cd /home/grpc_${GRPC_VERSION}/grpc/third_party/protobuf \
   && ./autogen.sh \
-  && ./configure --prefix=/usr/local \
+  && ./configure --prefix=${LIBPATH} \
   && make -j8 \
   && make install \
   && cd /home/grpc_${GRPC_VERSION}/grpc \
   && make -j8 \
-  && make prefix=/usr/local install \
-  && ldconfig /usr/local/lib \
+  && make prefix=${LIBPATH} install \
+  && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf grpc_${GRPC_VERSION} \
   && apk del .build-deps
 
 ARG WT_VERSION=4.0.4
 
-#RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
-#  && tar xfz ${WT_VERSION}.tar.gz \
-#  && rm ${WT_VERSION}.tar.gz \
-#  && cd wt-${WT_VERSION} \
-#  && mkdir cmake_build \
-#  && cd cmake_build \
-#  && cmake -DWT_CPP_11_MODE='-std=c++11' -DENABLE_SQLITE=OFF -DENABLE_POSTGRES=OFF -DENABLE_FIREBIRD=OFF -DENABLE_MYSQL=OFF -DENABLE_MSSQLSERVER=OFF -DBOOST_ROOT=/usr/local -DCMAKE_INSTALL_PREFIX=/usr/local .. \
-#  && ldconfig /usr/local/lib \
-#  && cd /home \
-#  && rm -rf wt-${WT_VERSION} \
-#  && apk del .build-deps
+RUN apk add --update --no-cache --virtual .build-deps cmake g++ make wget linux-headers \
+  && cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
+  && tar xfz ${WT_VERSION}.tar.gz \
+  && rm ${WT_VERSION}.tar.gz \
+  && cd wt-${WT_VERSION} \
+  && mkdir cmake_build \
+  && cd cmake_build \
+  && cmake -DWT_CPP_11_MODE='-std=c++11' -DBOOST_ROOT=${LIBPATH} -DCMAKE_INSTALL_PREFIX=${LIBPATH} -DENABLE_SQLITE=OFF -DENABLE_POSTGRES=OFF -DENABLE_FIREBIRD=OFF -DENABLE_MYSQL=OFF -DENABLE_MSSQLSERVER=OFF .. \
+  && make -j8 \
+  && make install \
+  && ldconfig ${LIBPATH}/lib \
+  && cd /home \
+  && rm -rf wt-${WT_VERSION} \
+  && apk del .build-deps
