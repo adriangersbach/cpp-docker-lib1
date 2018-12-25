@@ -17,23 +17,46 @@ RUN apt-get update \
                         make \
                         wget
 
+RUN NB_CORES=$(grep -c '^processor' /proc/cpuinfo) \
+  && echo ${NB_CORES} \
+  && export NB_CORES="${NB_CORES}"
+ENV NB_CORES="${NB_CORES}"
+
+# Download cmake, untar, setup install with ...
+
+# 3.13.2
+
+ARG CMAKE_VERSION=3.5
+ARG CMAKE_BUILD=0
+
+RUN cd /home \
+  && wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz \
+  && tar xfz cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz \
+  && rm cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz \
+  && cd cmake-${CMAKE_VERSION}.${CMAKE_BUILD} \
+  && ./bootstrap \
+  && make -j$((NB_CORES+1)) -l${NB_CORES} \
+  && make install \
+  && cd .. \
+  && rm -rf cmake-${CMAKE_VERSION}.${CMAKE_BUILD}
+
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
 # and then install
 
-ARG BOOST_VERSION=1.68.0
-ARG BOOST_VERSION_=1_68_0
+ARG BOOST_VERSION=1.69.0
+ARG BOOST_VERSION_=1_69_0
 
 RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_}.tar.gz \
   && tar xfz boost_${BOOST_VERSION_}.tar.gz \
   && rm boost_${BOOST_VERSION_}.tar.gz \
   && cd boost_${BOOST_VERSION_} \
-  && ./bootstrap.sh --prefix=${LIBPATH} --with-libraries=atomic,chrono,date_time,filesystem,program_options,random,regex,serialization,signals,system,thread \
+  && ./bootstrap.sh --prefix=${LIBPATH} --with-libraries=atomic,chrono,date_time,filesystem,program_options,random,regex,serialization,system,thread \
   && ./b2 -j8 install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_}
 
-ARG GRPC_VERSION=1.16.1
+ARG GRPC_VERSION=1.17.2
 
 RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && git clone -b v${GRPC_VERSION} https://github.com/grpc/grpc \
@@ -44,6 +67,7 @@ RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && ./configure --prefix=${LIBPATH} \
   && make -j8 \
   && make install \
+  && ldconfig ${LIBPATH}/lib \
   && cd /home/grpc_${GRPC_VERSION}/grpc \
   && make -j8 \
   && make prefix=${LIBPATH} install \
@@ -66,7 +90,7 @@ RUN cd /home && wget http://pocoproject.org/releases/poco-${POCO_VERSION}/poco-$
   && cd /home \
   && rm -rf poco-${POCO_VERSION}-all
 
-ARG WT_VERSION=4.0.4
+ARG WT_VERSION=4.0.5
 
 RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
   && tar xfz ${WT_VERSION}.tar.gz \
@@ -80,3 +104,4 @@ RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf wt-${WT_VERSION}
+
