@@ -17,17 +17,15 @@ RUN apt-get update \
                         make \
                         wget
 
-RUN NB_CORES=$(grep -c '^processor' /proc/cpuinfo) \
-  && echo ${NB_CORES} \
-  && export NB_CORES="${NB_CORES}"
-ENV NB_CORES="${NB_CORES}"
+#RUN NB_CORES=$(grep -c '^processor' /proc/cpuinfo) \
+#  && echo ${NB_CORES} \
+#  && export NB_CORES="${NB_CORES}"
+ARG NB_CORES=8
 
 # Download cmake, untar, setup install with ...
 
-# 3.13.2
-
-ARG CMAKE_VERSION=3.5
-ARG CMAKE_BUILD=0
+ARG CMAKE_VERSION=3.13
+ARG CMAKE_BUILD=2
 
 RUN cd /home \
   && wget https://cmake.org/files/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.${CMAKE_BUILD}.tar.gz \
@@ -51,7 +49,8 @@ RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/so
   && rm boost_${BOOST_VERSION_}.tar.gz \
   && cd boost_${BOOST_VERSION_} \
   && ./bootstrap.sh --prefix=${LIBPATH} --with-libraries=atomic,chrono,date_time,filesystem,program_options,random,regex,serialization,system,thread \
-  && ./b2 -j8 install \
+  && ./b2 -j$((NB_CORES+1)) -l${NB_CORES} \
+  && ./b2 install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_}
@@ -65,11 +64,11 @@ RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && cd /home/grpc_${GRPC_VERSION}/grpc/third_party/protobuf \
   && ./autogen.sh \
   && ./configure --prefix=${LIBPATH} \
-  && make -j8 \
+  && make -j$((NB_CORES+1)) -l${NB_CORES} \
   && make install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home/grpc_${GRPC_VERSION}/grpc \
-  && make -j8 \
+  && make -j$((NB_CORES+1)) -l${NB_CORES} \
   && make prefix=${LIBPATH} install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
@@ -84,7 +83,7 @@ RUN cd /home && wget http://pocoproject.org/releases/poco-${POCO_VERSION}/poco-$
   && mkdir cmake_build \
   && cd cmake_build \
   && cmake -DWT_CPP_11_MODE='-std=c++11' -DENABLE_NETSSL=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_DATA_ODBC=OFF -DENABLE_DATA_MYSQL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${LIBPATH} .. \
-  && make -j8 \
+  && make -j$((NB_CORES+1)) -l${NB_CORES} \
   && make install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
@@ -99,7 +98,7 @@ RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
   && mkdir cmake_build \
   && cd cmake_build \
   && cmake -DWT_CPP_11_MODE='-std=c++11' -DBOOST_ROOT=${LIBPATH} -DCMAKE_INSTALL_PREFIX=${LIBPATH} -DENABLE_SQLITE=OFF -DENABLE_POSTGRES=OFF -DENABLE_FIREBIRD=OFF -DENABLE_MYSQL=OFF -DENABLE_MSSQLSERVER=OFF .. \
-  && make -j8 \
+  && make -j$((NB_CORES+1)) -l${NB_CORES} \
   && make install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
