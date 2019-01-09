@@ -68,7 +68,7 @@ RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && make install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home/grpc_${GRPC_VERSION}/grpc \
-  && make -j$((NB_CORES+1)) -l${NB_CORES} \
+  && make HAS_SYSTEM_PROTOBUF=false -j$((NB_CORES+1)) -l${NB_CORES} \
   && make prefix=${LIBPATH} install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
@@ -103,4 +103,17 @@ RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf wt-${WT_VERSION}
+
+ARG SPDLOG_VERSION=1.2.1
+
+RUN cd /home && mkdir spdlog_${SPDLOG_VERSION} && cd spdlog_${SPDLOG_VERSION} \
+  && git clone -b v${SPDLOG_VERSION} https://github.com/gabime/spdlog \
+  && cd spdlog \
+  && mkdir cmake_build \
+  && cd cmake_build \
+  && cmake .. \
+  && make -j$((NB_CORES+1)) -l${NB_CORES} \
+  && make prefix=${LIBPATH} install \
+  && cd /home \
+  && rm -rf spdlog_${GRPC_VERSION}
 
