@@ -2,6 +2,8 @@ FROM ubuntu:16.04
 
 MAINTAINER "Adrian Gersbach"
 
+#ENV http_proxy="http://192.168.1.1:8080" https_proxy="https://192.168.1.1:8080" NO_PROXY="localhost,127.0.0.1,::1"
+
 ARG LIBPATH=/usr/local
 ENV PATH="${PATH}:${LIBPATH}/lib"
 
