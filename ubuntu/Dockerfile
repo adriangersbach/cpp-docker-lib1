@@ -117,5 +117,5 @@ RUN cd /home && mkdir spdlog_${SPDLOG_VERSION} && cd spdlog_${SPDLOG_VERSION} \
   && make -j$((NB_CORES+1)) -l${NB_CORES} \
   && make prefix=${LIBPATH} install \
   && cd /home \
-  && rm -rf spdlog_${GRPC_VERSION}
+  && rm -rf spdlog_${SPDLOG_VERSION}
 
