@@ -57,7 +57,7 @@ RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/so
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_}
 
-ARG GRPC_VERSION=1.17.2
+ARG GRPC_VERSION=1.18.0
 
 RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && git clone -b v${GRPC_VERSION} https://github.com/grpc/grpc \
@@ -106,7 +106,7 @@ RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
   && cd /home \
   && rm -rf wt-${WT_VERSION}
 
-ARG SPDLOG_VERSION=1.2.1
+ARG SPDLOG_VERSION=1.3.1
 
 RUN cd /home && mkdir spdlog_${SPDLOG_VERSION} && cd spdlog_${SPDLOG_VERSION} \
   && git clone -b v${SPDLOG_VERSION} https://github.com/gabime/spdlog \
