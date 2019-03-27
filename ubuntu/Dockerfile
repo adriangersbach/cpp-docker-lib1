@@ -56,7 +56,7 @@ RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/so
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_}
 
-ARG GRPC_VERSION=1.18.0
+ARG GRPC_VERSION=1.19.1
 
 RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && git clone -b v${GRPC_VERSION} https://github.com/grpc/grpc \
