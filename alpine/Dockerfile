@@ -23,7 +23,7 @@ RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget li
   && rm -rf boost_${BOOST_VERSION_} \
   && apk del .build-deps
 
-ARG GRPC_VERSION=1.16.1
+ARG GRPC_VERSION=1.19.1
 
 RUN apk add --update --no-cache --virtual .build-deps autoconf automake cmake git g++ libtool make linux-headers \
   && cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
@@ -60,7 +60,7 @@ RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget li
   && rm -rf poco-${POCO_VERSION}-all \
   && apk del .build-deps
 
-ARG WT_VERSION=4.0.4
+ARG WT_VERSION=4.0.5
 
 RUN apk add --update --no-cache --virtual .build-deps cmake g++ make wget linux-headers \
   && cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
