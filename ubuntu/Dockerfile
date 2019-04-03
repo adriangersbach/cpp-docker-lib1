@@ -51,7 +51,7 @@ RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/so
   && rm boost_${BOOST_VERSION_}.tar.gz \
   && cd boost_${BOOST_VERSION_} \
   && ./bootstrap.sh --prefix=${LIBPATH} --with-libraries=atomic,chrono,date_time,filesystem,program_options,random,regex,serialization,system,thread \
-  && ./b2 cxxstd=14 -j$((NB_CORES+1)) -l${NB_CORES} install \
+  && ./b2 cxxstd=14 -j$((NB_CORES+1)) install \
   && ldconfig ${LIBPATH}/lib \
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_}
