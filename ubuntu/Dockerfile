@@ -43,8 +43,8 @@ RUN cd /home \
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
 # and then install
 
-ARG BOOST_VERSION=1.69.0
-ARG BOOST_VERSION_=1_69_0
+ARG BOOST_VERSION=1.70.0
+ARG BOOST_VERSION_=1_70_0
 
 RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_}.tar.gz \
   && tar xfz boost_${BOOST_VERSION_}.tar.gz \
@@ -56,7 +56,7 @@ RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/so
   && cd /home \
   && rm -rf boost_${BOOST_VERSION_}
 
-ARG GRPC_VERSION=1.19.1
+ARG GRPC_VERSION=1.21.3
 
 RUN cd /home && mkdir grpc_${GRPC_VERSION} && cd grpc_${GRPC_VERSION} \
   && git clone -b v${GRPC_VERSION} https://github.com/grpc/grpc \
