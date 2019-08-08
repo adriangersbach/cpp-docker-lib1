@@ -43,8 +43,8 @@ RUN cd /home \
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
 # and then install
 
-ARG BOOST_VERSION=1.69.0
-ARG BOOST_VERSION_=1_69_0
+ARG BOOST_VERSION=1.70.0
+ARG BOOST_VERSION_=1_70_0
 
 RUN cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_}.tar.gz \
   && tar xfz boost_${BOOST_VERSION_}.tar.gz \
@@ -90,7 +90,7 @@ RUN cd /home && wget http://pocoproject.org/releases/poco-${POCO_VERSION}/poco-$
   && cd /home \
   && rm -rf poco-${POCO_VERSION}-all
 
-ARG WT_VERSION=4.0.5
+ARG WT_VERSION=4.1.0
 
 RUN cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
   && tar xfz ${WT_VERSION}.tar.gz \
