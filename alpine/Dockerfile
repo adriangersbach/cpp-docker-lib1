@@ -8,8 +8,8 @@ ENV PATH="${PATH}:${LIBPATH}/lib"
 # Download boost, untar, setup install with bootstrap and only do the Program Options library,
 # and then install
 
-ARG BOOST_VERSION=1.68.0
-ARG BOOST_VERSION_=1_68_0
+ARG BOOST_VERSION=1.72.0
+ARG BOOST_VERSION_=1_72_0
 
 RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget linux-headers \
   && cd /home && wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_}.tar.gz \
@@ -43,7 +43,7 @@ RUN apk add --update --no-cache --virtual .build-deps autoconf automake cmake gi
   && rm -rf grpc_${GRPC_VERSION} \
   && apk del .build-deps
 
-ARG POCO_VERSION=1.9.0
+ARG POCO_VERSION=1.9.4
 
 RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget linux-headers \
   && cd /home && wget http://pocoproject.org/releases/poco-${POCO_VERSION}/poco-${POCO_VERSION}-all.tar.gz \
@@ -60,7 +60,7 @@ RUN apk add --update --no-cache --virtual .build-deps cmake git g++ make wget li
   && rm -rf poco-${POCO_VERSION}-all \
   && apk del .build-deps
 
-ARG WT_VERSION=4.0.5
+ARG WT_VERSION=4.2.0
 
 RUN apk add --update --no-cache --virtual .build-deps cmake g++ make wget linux-headers \
   && cd /home && wget https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz \
